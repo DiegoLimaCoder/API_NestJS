@@ -1,30 +1,22 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/infra/database/prisma.service';
 import { CreateUserDto } from '../dtos/user.dto';
 import { hash } from 'bcrypt';
+import { IUserRepository } from '../prisma/repositories/user.repository';
 @Injectable()
 export class CreateUserUserCase {
-  constructor(private prisma: PrismaService) {}
+  constructor(private userRepository: IUserRepository) {}
 
-  async execute({ name, email, password, username }: CreateUserDto) {
-    const userAlreadyExist = await this.prisma.user.findFirst({
-      where: {
-        OR: [{ username }, { email }],
-      },
-    });
+  async execute(data: CreateUserDto) {
+    const user = await this.userRepository.findByUsernameOrEmail(data);
 
-    if (userAlreadyExist) {
+    if (user) {
       throw new HttpException('users already exist!', HttpStatus.BAD_REQUEST);
     }
-    const passwordHash = await hash(password, 10);
+    const password = await hash(user.password, 10);
 
-    return await this.prisma.user.create({
-      data: {
-        name,
-        username,
-        email,
-        password: passwordHash,
-      },
+    return await this.userRepository.save({
+      ...data,
+      password,
     });
   }
 }
