@@ -2,16 +2,19 @@ import {
   Body,
   Controller,
   Post,
-  UsePipes,
   Get,
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { CreateUserDTO } from './dtos/user.dto';
+
 import { CreateUserUseCase } from './userCase/create-user.useCase';
-import { CreateUserValidationPipe } from './pipes/create-user.validation.pipe';
+
 import { AuthGuard } from 'src/infra/providers/auth-guard.provider';
 import { ProfileUserUseCase } from './userCase/profile-user.usecase';
+import {
+  CreateUserResponseSchemaDTO,
+  CreateUserSchemaDTO,
+} from './schemas/create-user.schema';
 
 @Controller('/users')
 export class UsersController {
@@ -21,9 +24,11 @@ export class UsersController {
   ) {}
 
   @Post()
-  @UsePipes(new CreateUserValidationPipe())
-  async create(@Body() data: CreateUserDTO) {
-    return await this.userCase.execute(data);
+  // @UsePipes(new CreateUserValidationPipe())
+  async create(@Body() data: CreateUserSchemaDTO) {
+    const user = await this.userCase.execute(data);
+
+    return CreateUserResponseSchemaDTO.safeParse(user);
   }
   @Get('/profile')
   @UseGuards(AuthGuard)
