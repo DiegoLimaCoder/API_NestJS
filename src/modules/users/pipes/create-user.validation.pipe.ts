@@ -6,12 +6,12 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { CreateUserDto } from '../dtos/user.dto';
+import { CreateUserDTO } from '../dtos/user.dto';
 
 @Injectable()
 export class CreateUserValidationPipe implements PipeTransform {
   transform(
-    { name, email, username, password }: CreateUserDto,
+    { name, email, username, password }: CreateUserDTO,
     metadata: ArgumentMetadata,
   ) {
     if (!name || !email || !username || !password) {

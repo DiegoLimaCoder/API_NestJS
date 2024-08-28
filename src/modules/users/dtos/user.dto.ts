@@ -1,17 +1,16 @@
-export type CreateUserDto = {
-  name: string;
+export type CreateUserDTO = {
   username: string;
-  email: string;
   password: string;
+  email: string;
+  name: string;
 };
 
-export type UserCreateDto = {
+export type UserCreatedDTO = {
   id: string;
-  createAt: Date;
-  updateAt: Date;
-} & CreateUserDto;
+  createdAt: Date;
+} & CreateUserDTO;
 
-export type UserNameAndEmail = {
-  username: string;
+export type UsernameAndEmail = {
   email: string;
+  username: string;
 };
