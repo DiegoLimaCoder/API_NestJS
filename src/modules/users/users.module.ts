@@ -5,6 +5,9 @@ import { UsersController } from './users.controller';
 import { IUserRepository } from './repositories/user.repositories';
 import { UserPrismaRepository } from './repositories/prisma/user.prisma.repository';
 import { ProfileUserUseCase } from './userCase/profile-user.usecase';
+import { UploadAvatarUserUseCase } from './userCase/upload-avatar-user.usecase';
+import { IStorage } from 'src/infra/providers/storage/storage';
+import { SupabaseStorage } from 'src/infra/providers/storage/supabase.storage';
 
 @Module({
   controllers: [UsersController],
@@ -12,10 +15,14 @@ import { ProfileUserUseCase } from './userCase/profile-user.usecase';
     CreateUserUseCase,
     ProfileUserUseCase,
     PrismaService,
-
+    UploadAvatarUserUseCase,
     {
       provide: IUserRepository,
       useClass: UserPrismaRepository,
+    },
+    {
+      provide: IStorage,
+      useClass: SupabaseStorage,
     },
   ],
 })
